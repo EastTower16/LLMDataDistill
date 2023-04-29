@@ -1,0 +1,3 @@
+# Convenient flag shortcuts.
+build --flag_alias=cuda_archs=@rules_cuda//cuda:archs
+build --action_env=BAZEL_CXXOPTS="-std=c++17"
