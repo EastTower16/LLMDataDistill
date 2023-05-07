@@ -2,19 +2,22 @@
 #define PD_COMMON_PAGE_H_
 #include <string>
 #include <vector>
-namespace pd_common
-{
+#include <unordered_map>
 
-    struct PdPage
-    {
-        std::string title;
-        std::string url;
-        std::string content;
+namespace pd {
 
-        // filled by dedup
-        std::vector<int> min_hashes;
-    };
+struct Page {
+  std::string title;
+  std::string url;
+  std::string content;
 
-} // namespace pd_common
+  // filled by dedup
+  std::vector<int> min_hashes;
+  // features filled by featurizer
+  std::unordered_map<int, float> features;
 
-#endif // PD_COMMON_PAGE_H_
+};
+
+}  // namespace pd
+
+#endif  // PD_COMMON_PAGE_H_
