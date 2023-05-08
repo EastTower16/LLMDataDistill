@@ -22,6 +22,16 @@ bool PageFeaturizer::Featurize(Page& page) {
     if(!status.ok()){
         return false;
     }
+    auto pageIds = ids[0];
+    for(auto& id : pageIds){
+        float w = log(2.0+id/100.0);
+        auto it = page.features.find(id);
+        if(it!= page.features.end()){
+            page.features.insert({id, w});
+        }else{
+            it->second +=w;
+        }
+    }
     return true;
 }
 
