@@ -10,6 +10,8 @@ struct Page {
   std::string title;
   std::string url;
   std::string content;
+  std::string idkey;
+  std::string category;
 
   // filled by dedup
   std::vector<int> min_hashes;

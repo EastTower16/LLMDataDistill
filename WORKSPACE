@@ -25,7 +25,7 @@ http_archive(
 
 http_archive(
     name = "minhashcuda",
-    #sha256 = "",
+    sha256 = "7c0101c68422aa038314e07842b2f83aa4c3d2b5520ebba350319277c4ad9c03",
     strip_prefix = "minhashcuda-d057b0769ef983aa1315ca8d78be6b6f67b380ae",
     urls = ["https://github.com/src-d/minhashcuda/archive/d057b0769ef983aa1315ca8d78be6b6f67b380ae.tar.gz"],
     build_file ="@//thirdparty:minhashcuda.BUILD"
@@ -44,4 +44,12 @@ http_archive(
     #sha256 = "",
     strip_prefix = "tokme-41d6f49e2ac3bddd8116a0ff0c56b35f370a9fae",
     urls = ["https://github.com/koth/tokme/archive/41d6f49e2ac3bddd8116a0ff0c56b35f370a9fae.zip"],
+)
+
+http_archive(
+    name="concurrentqueue",
+    #sha256 = "",
+    strip_prefix = "concurrentqueue-810f6213a2ee3bbd0c2ff647c28996cfff84df06",
+    urls = ["https://github.com/koth/concurrentqueue/archive/810f6213a2ee3bbd0c2ff647c28996cfff84df06.zip"],
+    build_file ="@//thirdparty:concurrentqueue.BUILD"
 )
