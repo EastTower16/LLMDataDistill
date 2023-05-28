@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name="page",
     hdrs=[
@@ -18,5 +20,6 @@ cc_library(
         ":page",
         "@concurrentqueue//:concurrentqueue",
         "@nlohmann_json//:json",
+        "@abseil-cpp//absl/log",
     ]
 )

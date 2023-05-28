@@ -13,8 +13,8 @@ struct Page {
   std::string idkey;
   std::string category;
 
-  // filled by dedup
-  std::vector<int> min_hashes;
+  // filled by minhashcuda
+  std::vector<std::pair<uint32_t,uint32_t>> weighted_hash_values;
   // features filled by featurizer
   std::unordered_map<int, float> features;
 

@@ -10,6 +10,7 @@ class BaseEncoder;
 namespace pd {
 class PageFeaturizer {
  public:
+  PageFeaturizer();
   virtual ~PageFeaturizer();
   virtual bool Init(const std::string& vocabPath);
   virtual bool Featurize(Page& page);

@@ -21,11 +21,12 @@ cc_library(
         'minhashcuda.cc',
     ],
     defines=[
-        "CUDA_ARCH=61",
+        "CUDA_ARCH=86",
     ],
     hdrs=[
     ],
     deps=[
         ":kernel",
+        "@local_cuda//:curand",
     ]
 )

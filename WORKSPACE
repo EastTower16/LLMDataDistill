@@ -8,9 +8,7 @@ http_archive(
 )
 
 load("@rules_cuda//cuda:repositories.bzl", "register_detected_cuda_toolchains", "rules_cuda_dependencies")
-
 rules_cuda_dependencies()
-
 register_detected_cuda_toolchains()
 
 # Bazel Skylib.
@@ -41,7 +39,7 @@ http_archive(
 
 http_archive(
     name="tokme",
-    #sha256 = "",
+    sha256 = "b055f3a5b3db636277ea56ae2ed8c8313e95bd75897e95e7f0705588460543e1",
     strip_prefix = "tokme-41d6f49e2ac3bddd8116a0ff0c56b35f370a9fae",
     urls = ["https://github.com/koth/tokme/archive/41d6f49e2ac3bddd8116a0ff0c56b35f370a9fae.zip"],
 )
@@ -53,3 +51,12 @@ http_archive(
     urls = ["https://github.com/koth/concurrentqueue/archive/810f6213a2ee3bbd0c2ff647c28996cfff84df06.zip"],
     build_file ="@//thirdparty:concurrentqueue.BUILD"
 )
+
+
+http_archive(
+    name="abseil-cpp",
+    sha256 = "ea1d31db00eb37e607bfda17ffac09064670ddf05da067944c4766f517876390",
+    strip_prefix = "abseil-cpp-c2435f8342c2d0ed8101cb43adfd605fdc52dca2",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/c2435f8342c2d0ed8101cb43adfd605fdc52dca2.zip"],
+)
+

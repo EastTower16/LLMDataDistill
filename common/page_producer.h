@@ -19,6 +19,7 @@ class PageProducer {
     moodycamel::BlockingConcurrentQueue<struct Page> page_queue_{1024};
     std::thread producer_;
     std::atomic_bool stop_=false;
+    static std::string EOFPageHashKey;
 };
 
 }  // namespace pd

@@ -3,7 +3,7 @@
 #include "youtokentome/cpp/bpe.h"
 
 namespace pd {
-
+PageFeaturizer::PageFeaturizer(){}
 PageFeaturizer::~PageFeaturizer() {}
 bool PageFeaturizer::Init(const std::string& vocabPath) {
     vkcom::Status status;
