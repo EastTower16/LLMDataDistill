@@ -32,7 +32,12 @@ void traverseDirectory(const std::string& path,
 }
 
 void doWork(pd::PageProducer* producer, pd::HashDumper* hasher){
-  
+  pd::Page p;
+  producer->takeOnePage(p, true);
+  while(p.idkey != pd::PageProducer::EOFPageHashKey){
+    hasher->process(p);
+    producer->takeOnePage(p, true); 
+  }
 }
 
 int main(int argc, char* argv[]) {
@@ -43,7 +48,8 @@ int main(int argc, char* argv[]) {
   traverseDirectory(absl::GetFlag(FLAGS_wudao_dir), pathList);
   LOG(INFO) << "got " << pathList.size() << " paths!";
   pageProducer.initByFileList(pathList);
-  std::this_thread::sleep_for(std::chrono::seconds(20));
+  doWork(&pageProducer, &hashDumper);
   pageProducer.shutdown();
   return 0;
 }
+

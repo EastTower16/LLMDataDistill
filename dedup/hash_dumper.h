@@ -17,11 +17,12 @@ class HashDumper {
  private:
    std::unique_ptr<PageFeaturizer> featurizer_;
    std::ofstream out_;
-   std::vector<int> indptr_;
-   std::vector<int> indices_;
+   std::vector<uint32_t> indptr_;
+   std::vector<uint32_t> indices_;
    std::vector<float> data_;
    int buffered_;
    void* minhashptr_;
+   uint32_t *result_buffer_;
 };
 }  // namespace pd
 
