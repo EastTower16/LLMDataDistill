@@ -26,10 +26,10 @@ bool PageFeaturizer::Featurize(Page& page) {
     for(auto& id : pageIds){
         float w = log(2.0+id/100.0);
         auto it = page.features.find(id);
-        if(it!= page.features.end()){
+        if(it== page.features.end()){
             page.features.insert({id, w});
         }else{
-            it->second +=w;
+            it->second += w;
         }
     }
     return true;

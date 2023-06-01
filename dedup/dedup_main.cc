@@ -12,6 +12,7 @@
 ABSL_FLAG(std::string, wudao_dir, "/g/wudao", "wudao dataset dir");
 ABSL_FLAG(std::string, output_path, "/g/wudao_features.txt",
           "feature output path");
+ABSL_FLAG(std::string, tokenizer_path, "vocab/tokme.model", "the tokenizer model path");
 
 namespace fs = std::filesystem;
 
@@ -33,17 +34,24 @@ void traverseDirectory(const std::string& path,
 
 void doWork(pd::PageProducer* producer, pd::HashDumper* hasher){
   pd::Page p;
+  uint64_t count = 0;
   producer->takeOnePage(p, true);
   while(p.idkey != pd::PageProducer::EOFPageHashKey){
     hasher->process(p);
+    count +=1;
+    if(count % 20000 == 0){
+      LOG(INFO) << count << " pages processed!!";
+    }
     producer->takeOnePage(p, true); 
   }
+  hasher->doBatch();
+  LOG(INFO) << count << " total pages processed!!";
 }
 
 int main(int argc, char* argv[]) {
   absl::ParseCommandLine(argc, argv);
   pd::PageProducer pageProducer;
-  pd::HashDumper hashDumper(absl::GetFlag(FLAGS_output_path));
+  pd::HashDumper hashDumper(absl::GetFlag(FLAGS_tokenizer_path),absl::GetFlag(FLAGS_output_path));
   std::vector<std::string> pathList;
   traverseDirectory(absl::GetFlag(FLAGS_wudao_dir), pathList);
   LOG(INFO) << "got " << pathList.size() << " paths!";

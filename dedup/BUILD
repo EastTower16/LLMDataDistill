@@ -24,6 +24,7 @@ cc_library(
     deps=[
         ":page_featurizer",
         "@abseil-cpp//absl/log",
+        "@abseil-cpp//absl/log:check",
         "@minhashcuda//:minhashcuda"
     ],
     visibility = ["//visibility:public"],

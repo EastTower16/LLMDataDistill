@@ -10,19 +10,21 @@ namespace pd {
 class PageFeaturizer;
 class HashDumper {
  public:
-  HashDumper(const std::string& outFile);
+  HashDumper(const std::string&  tokenizerPath,const std::string& outFile);
   virtual ~HashDumper();
   virtual bool process(Page& page);
-  
+  virtual bool doBatch();
  private:
+  
    std::unique_ptr<PageFeaturizer> featurizer_;
-   std::ofstream out_;
+   FILE* out_=nullptr;
    std::vector<uint32_t> indptr_;
    std::vector<uint32_t> indices_;
    std::vector<float> data_;
-   int buffered_;
-   void* minhashptr_;
-   uint32_t *result_buffer_;
+   std::vector<std::string> idkeys_;
+   int buffered_=0;
+   void* minhashptr_=nullptr;
+   uint32_t *result_buffer_=nullptr;
 };
 }  // namespace pd
 
