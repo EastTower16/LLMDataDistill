@@ -72,9 +72,9 @@ bool HashDumper::doBatch() {
   LOG(INFO) << "minhash calc time: " << duration << " ms";
   for (int i = 0; i < static_cast<int>(indptr_.size() - 1); i++) {
     size_t offset = 2 * kMinHashBins * i;
-    fprintf(out_, "%s\t",idkeys_[i].c_str() );
+    fprintf(out_, "%s",idkeys_[i].c_str() );
     for (int k = 0; k < kMinHashBins; k++) {
-      fprintf(out_,"%u %u",result_buffer_[2 * k + offset],result_buffer_[2 * k + offset + 1]);
+      fprintf(out_," %u %u",result_buffer_[2 * k + offset],result_buffer_[2 * k + offset + 1]);
     }
     fprintf(out_,"\n");
   }

@@ -30,6 +30,21 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name="lsh_index",
+    srcs=[
+        "lsh_index.cc",
+    ],
+    hdrs=[
+        "lsh_index.h",
+    ],
+    deps=[
+        "@abseil-cpp//absl/log",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
 cc_binary(
     name ="dedup_main",
     srcs=[
@@ -43,5 +58,21 @@ cc_binary(
         "@abseil-cpp//absl/flags:flag",
         "@abseil-cpp//absl/flags:parse",
         "@minhashcuda//:minhashcuda",
+    ]
+)
+
+
+cc_binary(
+    name ="lsh_main",
+    srcs=[
+        "lsh_main.cc",
+    ],
+    deps=[
+        ":lsh_index",
+        "@abseil-cpp//absl/log",
+        "@abseil-cpp//absl/log:check",
+        "@abseil-cpp//absl/flags:flag",
+        "@abseil-cpp//absl/flags:parse",
+        "@abseil-cpp//absl/strings",
     ]
 )
