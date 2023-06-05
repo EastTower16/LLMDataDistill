@@ -56,6 +56,7 @@ cc_binary(
         ":hash_dumper",
         "@abseil-cpp//absl/log",
         "@abseil-cpp//absl/flags:flag",
+        "@abseil-cpp//absl/log:initialize",
         "@abseil-cpp//absl/flags:parse",
         "@minhashcuda//:minhashcuda",
     ]
@@ -72,6 +73,7 @@ cc_binary(
         "@abseil-cpp//absl/log",
         "@abseil-cpp//absl/log:check",
         "@abseil-cpp//absl/flags:flag",
+        "@abseil-cpp//absl/log:initialize",
         "@abseil-cpp//absl/flags:parse",
         "@abseil-cpp//absl/strings",
     ]

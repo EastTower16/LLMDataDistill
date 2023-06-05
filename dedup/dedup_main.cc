@@ -4,8 +4,11 @@
 #include <vector>
 
 #include "absl/log/log.h"
+#include "absl/log/initialize.h"
+#include "absl/log/globals.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/flags/usage.h"
 #include "common/page_producer.h"
 #include "dedup/hash_dumper.h"
 
@@ -49,7 +52,10 @@ void doWork(pd::PageProducer* producer, pd::HashDumper* hasher){
 }
 
 int main(int argc, char* argv[]) {
+  absl::SetProgramUsageMessage("Dedup Main");
   absl::ParseCommandLine(argc, argv);
+  absl::InitializeLog();
+  absl::SetStderrThreshold(absl::LogSeverity::kInfo);
   pd::PageProducer pageProducer;
   pd::HashDumper hashDumper(absl::GetFlag(FLAGS_tokenizer_path),absl::GetFlag(FLAGS_output_path));
   std::vector<std::string> pathList;

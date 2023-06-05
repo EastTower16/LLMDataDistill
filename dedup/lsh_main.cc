@@ -5,10 +5,13 @@
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/flags/usage.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/numbers.h"
 #include "absl/log/log.h"
+#include "absl/log/initialize.h"
+#include "absl/log/globals.h"
 #include "absl/log/check.h"
 #include "dedup/lsh_index.h"
 
@@ -20,7 +23,10 @@ ABSL_FLAG(float, dup_threshold, 0.75, "the sim hash threshold to judge as duplic
 ABSL_FLAG(std::string, dup_key_path, "/g/dup_keys.txt",
           "the output duplicated keys file path");
 int main(int argc, char* argv[]) {
+  absl::SetProgramUsageMessage("Lsh Main");
   absl::ParseCommandLine(argc, argv);
+  absl::InitializeLog();
+  absl::SetStderrThreshold(absl::LogSeverity::kInfo);
   pd::LshIndex index(absl::GetFlag(FLAGS_nband),
                      absl::GetFlag(FLAGS_band_slots));
   std::ifstream inputFile(absl::GetFlag(FLAGS_minhash_path));
