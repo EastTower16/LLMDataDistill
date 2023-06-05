@@ -29,7 +29,7 @@ bool PageProducer::initByFileList(const std::vector<std::string>& fileList) {
         struct Page p;
         p.title = obj["title"].get<std::string>();
         p.content = obj["content"].get<std::string>();
-        p.idkey = obj["titleUkey"].get<std::string>();
+        p.idkey = obj["uniqueKey"].get<std::string>();
         p.category = obj["dataType"].get<std::string>();
         if(p.category != "博客"){
           continue;

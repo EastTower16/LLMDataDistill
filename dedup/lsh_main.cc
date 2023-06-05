@@ -41,8 +41,11 @@ int main(int argc, char* argv[]) {
     CHECK_EQ(static_cast<int>(ss.size()), 257)<<line;
     pd::WeightedMinHash wmh;
     for(int i=0;i<128;i++){
-        absl::SimpleAtoi(ss[1+i*2],&wmh.ks[i]);
-        absl::SimpleAtoi(ss[2+i*2],&wmh.ts[i]);
+        uint32_t k=0,t=0;
+        absl::SimpleAtoi(ss[1+i*2],&k);
+        absl::SimpleAtoi(ss[2+i*2],&t);
+        wmh.ks.push_back(k);
+        wmh.ts.push_back(t);
     }
     std::vector<int> hashvals;
     std::vector<std::string> cands;
