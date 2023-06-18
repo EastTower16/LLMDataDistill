@@ -19,7 +19,7 @@ ABSL_FLAG(std::string, minhash_path, "/g/wudao_features.txt",
           "calced weighted min hash output file path");
 ABSL_FLAG(int, nband, 8, "the band number of lsh");
 ABSL_FLAG(int, band_slots, 99829, "hash number of same band");
-ABSL_FLAG(float, dup_threshold, 0.75, "the sim hash threshold to judge as duplicate");
+ABSL_FLAG(float, dup_threshold, 0.85, "the sim hash threshold to judge as duplicate");
 ABSL_FLAG(std::string, dup_key_path, "/g/dup_keys.txt",
           "the output duplicated keys file path");
 int main(int argc, char* argv[]) {
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
         for(size_t i=0;i<cands.size();i++){
             if(sims[i] >= dupThreshold){
                 gotDup=true;
-                LOG(INFO)<<"key:["<<key<<"] dup to:["<<cands[i]<<"] with sim:["<<sims[i]<<"]";
+                //LOG(INFO)<<"key:["<<key<<"] dup to:["<<cands[i]<<"] with sim:["<<sims[i]<<"]";
                 outputFile<<key<<std::endl;
                 break;
             }
