@@ -23,8 +23,8 @@ cc_library(
     ],
     deps=[
         ":page_featurizer",
-        "@abseil-cpp//absl/log",
-        "@abseil-cpp//absl/log:check",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/log:check",
         "@minhashcuda//:minhashcuda"
     ],
     visibility = ["//visibility:public"],
@@ -39,7 +39,7 @@ cc_library(
         "lsh_index.h",
     ],
     deps=[
-        "@abseil-cpp//absl/log",
+        "@com_google_absl//absl/log",
     ],
     visibility = ["//visibility:public"],
 )
@@ -54,12 +54,15 @@ cc_binary(
         "//common:page_producer",
         ":page_featurizer",
         ":hash_dumper",
-        "@abseil-cpp//absl/log",
-        "@abseil-cpp//absl/flags:flag",
-        "@abseil-cpp//absl/log:initialize",
-        "@abseil-cpp//absl/flags:parse",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log:initialize",
+        "@com_google_absl//absl/flags:parse",
         "@minhashcuda//:minhashcuda",
-    ]
+    ],
+    linkopts = [
+        '-lm',
+    ],
 )
 
 
@@ -70,11 +73,14 @@ cc_binary(
     ],
     deps=[
         ":lsh_index",
-        "@abseil-cpp//absl/log",
-        "@abseil-cpp//absl/log:check",
-        "@abseil-cpp//absl/flags:flag",
-        "@abseil-cpp//absl/log:initialize",
-        "@abseil-cpp//absl/flags:parse",
-        "@abseil-cpp//absl/strings",
-    ]
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/log:check",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log:initialize",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_absl//absl/strings",
+    ],
+    linkopts = [
+        '-lm',
+    ],
 )

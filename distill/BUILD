@@ -1,16 +1,54 @@
 package(default_visibility = ["//visibility:public"])
 
+load("@australis//:australis.bzl", "australis")
+
+licenses(["notice"])
+
+australis(
+    name = "marketing_detection",
+    cc_namespace = "pd",
+    py_deps = [],  # Internal flax deps
+)
+
 cc_binary(
     name ="gen_ex_main",
     srcs=[
         "gen_ex_main.cc",
     ],
     deps=[
-        "@abseil-cpp//absl/log",
-        "@abseil-cpp//absl/flags:flag",
-        "@abseil-cpp//absl/log:initialize",
-        "@abseil-cpp//absl/flags:parse",
-        "@abseil-cpp//absl/strings",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log:initialize",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_absl//absl/strings",
         "@tokme//:tokme",
     ]
+)
+
+
+
+cc_binary(
+    name ="train_marketing_detection",
+    srcs=[
+        "train_marketing_detection.cc",
+    ],
+    linkstatic = 1,
+    deps=[
+        ":marketing_detection_cc",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/log:check",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log:initialize",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_absl//absl/strings",
+        # "@australis//australis:cpu_support",
+        "@australis//australis:gpu_support",
+        "@australis//australis:petri",
+        "@tokme//:tokme",
+        "@australis//australis",
+
+    ],
+    linkopts = [
+        '-lm',
+    ],
 )

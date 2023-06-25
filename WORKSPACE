@@ -1,15 +1,7 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-http_archive(
-    name = "rules_cuda",
-    sha256 = "e32c8428a2153b412b711db3e1eed0e3beca424130976eb328cdc7f3286d9385",
-    strip_prefix = "rules_cuda-a0087e973eb11696c37e227564ee964a3652877e",
-    urls = ["https://github.com/EastTower16/rules_cuda/archive/a0087e973eb11696c37e227564ee964a3652877e.tar.gz"],
-)
 
-load("@rules_cuda//cuda:repositories.bzl", "register_detected_cuda_toolchains", "rules_cuda_dependencies")
-rules_cuda_dependencies()
-register_detected_cuda_toolchains()
 
 # Bazel Skylib.
 http_archive(
@@ -23,9 +15,9 @@ http_archive(
 
 http_archive(
     name = "minhashcuda",
-    sha256 = "7c0101c68422aa038314e07842b2f83aa4c3d2b5520ebba350319277c4ad9c03",
-    strip_prefix = "minhashcuda-d057b0769ef983aa1315ca8d78be6b6f67b380ae",
-    urls = ["https://github.com/src-d/minhashcuda/archive/d057b0769ef983aa1315ca8d78be6b6f67b380ae.tar.gz"],
+    # sha256 = "7c0101c68422aa038314e07842b2f83aa4c3d2b5520ebba350319277c4ad9c03",
+    strip_prefix = "minhashcuda-a0d014aa31b6cdb26bb5cc2b11ccefe137b0193c",
+    urls = ["https://github.com/koth/minhashcuda/archive/a0d014aa31b6cdb26bb5cc2b11ccefe137b0193c.tar.gz"],
     build_file ="@//thirdparty:minhashcuda.BUILD"
 )
 
@@ -53,10 +45,60 @@ http_archive(
 )
 
 
+# http_archive(
+#     name="abseil-cpp",
+#     sha256 = "ea1d31db00eb37e607bfda17ffac09064670ddf05da067944c4766f517876390",
+#     strip_prefix = "abseil-cpp-c2435f8342c2d0ed8101cb43adfd605fdc52dca2",
+#     urls = ["https://github.com/abseil/abseil-cpp/archive/c2435f8342c2d0ed8101cb43adfd605fdc52dca2.zip"],
+# )
+
 http_archive(
-    name="abseil-cpp",
-    sha256 = "ea1d31db00eb37e607bfda17ffac09064670ddf05da067944c4766f517876390",
-    strip_prefix = "abseil-cpp-c2435f8342c2d0ed8101cb43adfd605fdc52dca2",
-    urls = ["https://github.com/abseil/abseil-cpp/archive/c2435f8342c2d0ed8101cb43adfd605fdc52dca2.zip"],
+    name="australis",
+    sha256 = "4627ebc92d8135de11172cd91cb45e408fccb8b27e78d4debd89d75921bf845f",
+    strip_prefix = "australis-bea893c8cf08fde4e09b7b2dd893f86b935bfd9d",
+    urls = ["https://github.com/EastTower16/australis/archive/bea893c8cf08fde4e09b7b2dd893f86b935bfd9d.zip"],
 )
 
+
+git_repository(
+     name = "jax",
+     commit = "c3e242700872c2f7e098a07f3911ee6d2de8132c",
+     remote = "https://github.com/google/jax.git",
+)
+
+
+http_archive(
+    name = "xla",
+    sha256 = "4ec16aff3862c5a243db956ce558d7a62eb79f5e20747b0e80802a3b0d12e419",
+    strip_prefix = "xla-12de6ec958419b57be248d0acd2d9f757e71748c",
+    urls = [
+        "https://github.com/openxla/xla/archive/12de6ec958419b57be248d0acd2d9f757e71748c.tar.gz",
+    ],
+)
+load("@xla//third_party/gpus:cuda_configure.bzl", "cuda_configure")
+
+cuda_configure(name = "local_config_cuda")
+# For development, one can use a local TF repository instead.
+# local_repository(
+#    name = "org_tensorflow",
+#    path = "tensorflow",
+# )
+
+
+load("@xla//:workspace4.bzl", "xla_workspace4")
+xla_workspace4()
+
+load("@xla//:workspace3.bzl", "xla_workspace3")
+xla_workspace3()
+
+load("@xla//:workspace2.bzl", "xla_workspace2")
+xla_workspace2()
+
+load("@xla//:workspace1.bzl", "xla_workspace1")
+xla_workspace1()
+
+load("@xla//:workspace0.bzl", "xla_workspace0")
+xla_workspace0()
+
+load("@jax//third_party/flatbuffers:workspace.bzl", flatbuffers = "repo")
+flatbuffers()

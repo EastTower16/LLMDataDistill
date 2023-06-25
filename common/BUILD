@@ -20,6 +20,6 @@ cc_library(
         ":page",
         "@concurrentqueue//:concurrentqueue",
         "@nlohmann_json//:json",
-        "@abseil-cpp//absl/log",
+        "@com_google_absl//absl/log",
     ]
 )
