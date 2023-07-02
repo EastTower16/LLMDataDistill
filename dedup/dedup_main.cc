@@ -13,8 +13,8 @@
 #include "dedup/hash_dumper.h"
 
 ABSL_FLAG(std::string, wudao_dir, "/g/wudao", "wudao dataset dir");
-ABSL_FLAG(std::string, output_path, "/g/wudao_features.txt",
-          "feature output path");
+ABSL_FLAG(std::string, output_path, "/g/duplicate_keys.txt",
+          "debup output path");
 ABSL_FLAG(std::string, tokenizer_path, "vocab/tokme.model", "the tokenizer model path");
 
 namespace fs = std::filesystem;

@@ -7,6 +7,7 @@
 
 #include "absl/log/check.h"
 #include "absl/log/log.h"
+#include "dedup/lsh_index.h"
 #include "dedup/page_featurizer.h"
 #include "minhashcuda.h"
 
@@ -16,9 +17,11 @@ const static uint32_t kVocabDim = 51200;
 const static uint16_t kMinHashBins = 128;
 const static uint32_t kDevice = 0;
 const static int kBatchSize = 10240;
+const static int kBandNum = 8;
+const static int kNumHashSlot = 99829;
+const static float kDedupThreshold = 0.85;
 HashDumper::HashDumper(const std::string& tokenizerPath,
-                       const std::string& outFile)
-  {
+                       const std::string& outFile) {
   out_ = fopen(outFile.c_str(), "w");
   featurizer_.reset(new PageFeaturizer());
   CHECK(featurizer_->Init(tokenizerPath));
@@ -32,13 +35,14 @@ HashDumper::HashDumper(const std::string& tokenizerPath,
     minhashptr_ = nullptr;
   }
   result_buffer_ = new uint32_t[kBatchSize * kMinHashBins * 2];
+  indexer_.reset(new pd::LshIndex(kBandNum, kNumHashSlot));
 }
 HashDumper::~HashDumper() {
   if (result_buffer_ != nullptr) {
     delete[] result_buffer_;
     result_buffer_ = nullptr;
   }
-  if(out_ != nullptr){
+  if (out_ != nullptr) {
     fclose(out_);
     out_ = nullptr;
   }
@@ -51,8 +55,8 @@ HashDumper::~HashDumper() {
 }
 
 bool HashDumper::doBatch() {
-  if(idkeys_.empty()){
-    LOG(INFO)<<"idkey is empty,...";
+  if (idkeys_.empty()) {
+    LOG(INFO) << "idkey is empty,...";
     return true;
   }
   MinhashCudaGenerator* gen =
@@ -72,11 +76,30 @@ bool HashDumper::doBatch() {
   LOG(INFO) << "minhash calc time: " << duration << " ms";
   for (int i = 0; i < static_cast<int>(indptr_.size() - 1); i++) {
     size_t offset = 2 * kMinHashBins * i;
-    fprintf(out_, "%s",idkeys_[i].c_str() );
+    std::string key = idkeys_[i];
+    pd::WeightedMinHash wmh;
     for (int k = 0; k < kMinHashBins; k++) {
-      fprintf(out_," %u %u",result_buffer_[2 * k + offset],result_buffer_[2 * k + offset + 1]);
+      wmh.ks.push_back(result_buffer_[2 * k + offset]);
+      wmh.ts.push_back(result_buffer_[2 * k + offset + 1]);
     }
-    fprintf(out_,"\n");
+    std::vector<int> hashvals;
+    std::vector<std::string> cands;
+    std::vector<float> sims;
+    bool gotDup = false;
+    if (indexer_->query(wmh, hashvals, cands, sims)) {
+      for (size_t i = 0; i < cands.size(); i++) {
+        if (sims[i] >= kDedupThreshold) {
+          gotDup = true;
+          // LOG(INFO)<<"key:["<<key<<"] dup to:["<<cands[i]<<"] with
+          // sim:["<<sims[i]<<"]";
+          fprintf(out_, "%s\n", key.c_str());
+          break;
+        }
+      }
+      if (!gotDup) {
+        indexer_->addWeightedMinHash(key, wmh, hashvals);
+      }
+    }
   }
   buffered_ = 0;
   indptr_.clear();
@@ -88,7 +111,7 @@ bool HashDumper::doBatch() {
 }
 bool HashDumper::process(Page& page) {
   if (!featurizer_->Featurize(page)) {
-    LOG(INFO)<<"feature error....:"<<page.title;
+    LOG(INFO) << "feature error....:" << page.title;
     return false;
   }
 
@@ -108,11 +131,11 @@ bool HashDumper::process(Page& page) {
     indices_.emplace_back(col);
     data_.emplace_back(features[i].second);
   }
-  //LOG(INFO)<<"process:"<<page.title;
+  // LOG(INFO)<<"process:"<<page.title;
   buffered_ += 1;
   if (buffered_ >= 10240) {
-    LOG(INFO)<<"will do one batch!";
-    if(!doBatch()){
+    LOG(INFO) << "will do one batch!";
+    if (!doBatch()) {
       return false;
     }
   }

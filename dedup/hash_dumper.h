@@ -8,6 +8,7 @@
 
 namespace pd {
 class PageFeaturizer;
+class LshIndex;
 class HashDumper {
  public:
   HashDumper(const std::string&  tokenizerPath,const std::string& outFile);
@@ -25,6 +26,7 @@ class HashDumper {
    int buffered_=0;
    void* minhashptr_=nullptr;
    uint32_t *result_buffer_=nullptr;
+   std::unique_ptr<LshIndex> indexer_;
 };
 }  // namespace pd
 

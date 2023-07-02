@@ -23,6 +23,7 @@ cc_library(
     ],
     deps=[
         ":page_featurizer",
+        ":lsh_index",
         "@com_google_absl//absl/log",
         "@com_google_absl//absl/log:check",
         "@minhashcuda//:minhashcuda"
