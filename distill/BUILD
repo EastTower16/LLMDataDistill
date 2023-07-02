@@ -55,3 +55,31 @@ cc_binary(
         '-lm',
     ],
 )
+
+
+cc_binary(
+    name ="distill_page_main",
+    srcs=[
+        "distill_page_main.cc",
+    ],
+    linkstatic = 1,
+    deps=[
+        ":marketing_detection_cc",
+        "//common:page_producer",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/log:check",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/log:initialize",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_absl//absl/strings",
+        # "@australis//australis:cpu_support",
+        "@australis//australis:gpu_support",
+        "@australis//australis:petri",
+        "@tokme//:tokme",
+        "@australis//australis",
+
+    ],
+    linkopts = [
+        '-lm',
+    ],
+)

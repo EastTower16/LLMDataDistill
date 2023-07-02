@@ -16,8 +16,11 @@
 #include "absl/strings/numbers.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
+
+#include "xla/pjrt/pjrt_client.h"
 #include "australis/australis.h"
 #include "australis/petri.h"
+
 #include "distill/marketing_detection.h"
 #include "youtokentome/cpp/bpe.h"
 
@@ -149,9 +152,20 @@ bool saveModel(const std::string& path,
   file.write(reinterpret_cast<const char*>(&numBuf), sizeof(int));
   for (int i = 0; i < numBuf; i++) {
     const aux::DeviceArray* p = params[i];
+    auto buffers = p->buffers();
+    auto shape =buffers[0]->on_device_shape();
+    int ndims=shape.dimensions_size();
+    file.write(reinterpret_cast<const char*>(&ndims), sizeof(int));
+    int total =1;
+    for(int k=0;k<ndims;k++){
+      int dim = shape.dimensions(k);
+      file.write(reinterpret_cast<const char*>(&dim), sizeof(int));
+      total *= dim;
+    }
     auto ia = *p->ToArrays();
     auto dataArr = ia.data()->data<float>();
     int numData = dataArr.size();
+    CHECK_EQ(total, numData);
     file.write(reinterpret_cast<const char*>(&numData), sizeof(int));
     for (int j = 0; j < numData; j++) {
       file.write(reinterpret_cast<const char*>(&dataArr[j]), sizeof(float));
