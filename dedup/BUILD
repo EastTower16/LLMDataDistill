@@ -41,6 +41,8 @@ cc_library(
     ],
     deps=[
         "@com_google_absl//absl/log",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/container:flat_hash_map",
     ],
     visibility = ["//visibility:public"],
 )

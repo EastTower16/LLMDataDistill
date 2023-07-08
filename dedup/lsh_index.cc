@@ -29,13 +29,16 @@ bool LshIndex::addWeightedMinHash(const std::string& key, const WeightedMinHash&
     if(wmh.ks.size() % nband !=0 || nband ==0 ){
         return false;
     }
-    if(all_hashes_.count(key)>0){
+    if(hashkeys_.count(key)>0){
         return false;
     }
-    all_hashes_.insert(std::make_pair(key, wmh));
+    int newIdx=all_keys_.size();
+    hashkeys_.insert(key);
+    all_keys_.emplace_back(key);
+    hash_values_.emplace_back(wmh);
     for(size_t i=0;i<nband;i++){
         int hashval=hash_func(wmh,nband, i, band_indexes_[0].size());
-        band_indexes_[i][hashval].insert(key);
+        band_indexes_[i][hashval].insert(newIdx);
     }
     return true;
 }
@@ -45,11 +48,11 @@ bool LshIndex::query(const WeightedMinHash& wmh,std::vector<int>& hashvals, std:
         return false;
     }
     dohash(wmh, nband, band_indexes_[0].size(),hashvals);
-    std::unordered_set<std::string> candidates;
+    absl::flat_hash_set<int> candidates;
     for(size_t i=0;i<nband;i++){
-        std::unordered_set<std::string>& iset=band_indexes_[i][hashvals[i]];
+        absl::flat_hash_set<int>& iset=band_indexes_[i][hashvals[i]];
         for(size_t j=i+1;j<nband;j++){
-            std::unordered_set<std::string>& jset=band_indexes_[j][hashvals[j]];
+            absl::flat_hash_set<int>& jset=band_indexes_[j][hashvals[j]];
             for(auto key: jset){
                 if(iset.count(key)>0){
                     candidates.insert(key);
@@ -58,8 +61,8 @@ bool LshIndex::query(const WeightedMinHash& wmh,std::vector<int>& hashvals, std:
         }
     }
     for(auto key : candidates){
-        const WeightedMinHash& other = all_hashes_[key];
-        cands.push_back(key);
+        const WeightedMinHash& other = hash_values_[key];
+        cands.push_back(all_keys_[key]);
         sims.push_back(wmh.jaccard(other));
     }
     return true;
