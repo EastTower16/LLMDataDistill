@@ -44,11 +44,11 @@ cc_binary(
         "@com_google_absl//absl/log:initialize",
         "@com_google_absl//absl/flags:parse",
         "@com_google_absl//absl/strings",
-        # "@australis//australis:cpu_support",
+        "@australis//australis:cpu_support",
         "@australis//australis:gpu_support",
         "@australis//australis:petri",
-        "@tokme//:tokme",
         "@australis//australis",
+        "@sentencepiece//src:sentencepiece_processor",
 
     ],
     linkopts = [
@@ -72,11 +72,11 @@ cc_binary(
         "@com_google_absl//absl/log:initialize",
         "@com_google_absl//absl/flags:parse",
         "@com_google_absl//absl/strings",
-        # "@australis//australis:cpu_support",
+        "@australis//australis:cpu_support",
         "@australis//australis:gpu_support",
         "@australis//australis:petri",
-        "@tokme//:tokme",
         "@australis//australis",
+        "@sentencepiece//src:sentencepiece_processor",
 
     ],
     linkopts = [

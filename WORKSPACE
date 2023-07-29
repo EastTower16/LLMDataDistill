@@ -66,6 +66,18 @@ git_repository(
      remote = "https://github.com/google/jax.git",
 )
 
+http_archive(
+    name = "sentencepiece",
+    sha256 = "0c28dfd2fad9f215ea276f60e62c41aca7f0ad48fd4bc072dd79180f59b44ec2",
+    strip_prefix = "sentencepiece-cf093775361a08dbe8d2a5ec98f548b25d7d6e37",
+    urls = [
+        "https://github.com/EastTower16/sentencepiece/archive/cf093775361a08dbe8d2a5ec98f548b25d7d6e37.tar.gz",
+    ],
+)
+# local_repository(
+#    name = "sentencepiece",
+#    path = "/f/workspace/sentencepiece",
+# )
 
 http_archive(
     name = "xla",

@@ -17,12 +17,12 @@
 #include "australis/petri.h"
 
 #include "distill/marketing_detection.h"
-#include "youtokentome/cpp/bpe.h"
+#include "sentencepiece_processor.h"
 
 ABSL_FLAG(std::string, wudao_dir, "/g/wudao", "wudao dataset dir");
 ABSL_FLAG(std::string, distilled_output_path, "/g/distilled_pages.txt",
           "distilled output path");
-ABSL_FLAG(std::string, tokenizer_path, "vocab/tokme.model",
+ABSL_FLAG(std::string, tokenizer_path, "vocab/sp_tok.model",
           "the tokenizer model path");
 ABSL_FLAG(std::string, model_path, "md_model.jax",
           "the marketing detection model path");
@@ -90,15 +90,11 @@ struct DistillClient {
     file.close();
     return true;
   }
-  bool Predict(const vkcom::BaseEncoder* encoder, int maxLength,
+  bool Predict(const sentencepiece::SentencePieceProcessor* encoder, int maxLength,
                 const pd::Page& p, float& marketingScore) {
-    std::vector<std::vector<int>> ids;
-    auto status = encoder->encode_as_ids({p.content}, &ids);
-    if (!status.ok() || ids.empty()) {
-      LOG(ERROR) << "encode_as_ids error!";
-      return false;
-    }
-    std::vector<int> tokens = ids[0];
+    
+    std::vector<int> tokens;
+    encoder->Encode(p.content, &tokens).IgnoreError();
     int textLen = tokens.size();
     if (textLen > maxLength) {
       tokens = std::vector<int>(tokens.begin(), tokens.begin() + maxLength);
@@ -120,7 +116,7 @@ struct DistillClient {
   }
 };
 
-void doWork(pd::PageProducer* producer,vkcom::BaseEncoder* encoder, DistillClient* distillClient) {
+void doWork(pd::PageProducer* producer,const sentencepiece::SentencePieceProcessor* encoder, DistillClient* distillClient) {
   pd::Page p;
   uint64_t count = 0;
   producer->takeOnePage(p, true);
@@ -141,11 +137,10 @@ int main(int argc, char* argv[]) {
   absl::ParseCommandLine(argc, argv);
   absl::InitializeLog();
   absl::SetStderrThreshold(absl::LogSeverity::kInfo);
-  std::unique_ptr<vkcom::BaseEncoder> encoder;
-  vkcom::Status status;
+  std::unique_ptr<sentencepiece::SentencePieceProcessor> encoder;
   encoder.reset(
-      new vkcom::BaseEncoder(absl::GetFlag(FLAGS_tokenizer_path), 1, &status));
-  if (!status.ok()) {
+      new sentencepiece::SentencePieceProcessor());
+  if (!encoder->Load(absl::GetFlag(FLAGS_tokenizer_path)).ok()) {
     LOG(ERROR) << "init tokenizer error,path:"
                << absl::GetFlag(FLAGS_tokenizer_path);
     return -1;

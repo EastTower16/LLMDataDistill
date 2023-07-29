@@ -57,9 +57,9 @@ class MarketingDetectionModel(nn.Module):
 
 
 def lower() -> Lowered:
-  model = MarketingDetectionModel(vocab_size=51200, hidden_size=256)
+  model = MarketingDetectionModel(vocab_size=64000, hidden_size=256)
 
-  tx = optax.adam(0.001)
+  tx = optax.adam(0.0003)
 
   @jax.jit
   def init():

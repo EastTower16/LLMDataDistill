@@ -22,11 +22,12 @@
 #include "australis/petri.h"
 
 #include "distill/marketing_detection.h"
-#include "youtokentome/cpp/bpe.h"
+#include "sentencepiece_processor.h"
+// #include "youtokentome/cpp/bpe.h"
 
 ABSL_FLAG(std::string, train_data_path, "data/train.txt", "training data path");
 ABSL_FLAG(std::string, test_data_path, "data/test.txt", "the test data path");
-ABSL_FLAG(std::string, tokenizer_path, "vocab/tokme.model",
+ABSL_FLAG(std::string, tokenizer_path, "vocab/sp_tok.model",
           "the tokenizer model path");
 ABSL_FLAG(std::string, out_model_path, "md_model.jax", "model output path");
 ABSL_FLAG(int, max_epoch, 50, "the maximum epoch number  of training");
@@ -62,28 +63,25 @@ absl::StatusOr<std::tuple<aux::PTree, aux::PTree, aux::PTree>> Unpack3Tuple(
       std::move(tmp[0]), std::move(tmp[1]), std::move(tmp[2]));
 }
 
+//   vector<int> ids;
+//   sp.Encode("hello world.", &ids).IgnoreError();
 static void convertLineToEx(const std::string& line,
-                            const vkcom::BaseEncoder* encoder, int maxLength,
+                            const sentencepiece::SentencePieceProcessor* encoder, int maxLength,
                             TrainEx& ex) {
   std::vector<std::string> vs = absl::StrSplit(line, absl::ByChar('\t'));
   int quality = 0, saleGrade = 0;
   absl::SimpleAtoi(vs[0], &quality);
   absl::SimpleAtoi(vs[1], &saleGrade);
   ex.marketing = saleGrade >= 30.0 ? 1 : 0;
-  std::vector<std::vector<int>> ids;
-  auto status = encoder->encode_as_ids({vs[2]}, &ids);
-  if (!status.ok() || ids.empty()) {
-    LOG(ERROR) << "encode_as_ids error!";
-    return;
-  }
-  std::vector<int> tokens = ids[0];
+  std::vector<int> tokens;
+  encoder->Encode(vs[2], &tokens).IgnoreError();
   int textLen = tokens.size();
   if (textLen > maxLength) {
     tokens = std::vector<int>(tokens.begin(), tokens.begin() + maxLength);
   }
   ex.data = tokens;
 }
-void loadTestDataset(const std::string& path, const vkcom::BaseEncoder* encoder,
+void loadTestDataset(const std::string& path, const sentencepiece::SentencePieceProcessor* encoder,
                      std::vector<TrainEx>& testData) {
   std::ifstream file(path);
   std::string line;
@@ -179,11 +177,10 @@ int main(int argc, char* argv[]) {
   absl::ParseCommandLine(argc, argv);
   absl::InitializeLog();
   absl::SetStderrThreshold(absl::LogSeverity::kInfo);
-  std::unique_ptr<vkcom::BaseEncoder> encoder;
-  vkcom::Status status;
+  std::unique_ptr<sentencepiece::SentencePieceProcessor> encoder;
   encoder.reset(
-      new vkcom::BaseEncoder(absl::GetFlag(FLAGS_tokenizer_path), 1, &status));
-  if (!status.ok()) {
+      new sentencepiece::SentencePieceProcessor());
+  if (!encoder->Load(absl::GetFlag(FLAGS_tokenizer_path)).ok()) {
     LOG(ERROR) << "init tokenizer error,path:"
                << absl::GetFlag(FLAGS_tokenizer_path);
     return -1;
